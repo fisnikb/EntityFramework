@@ -197,7 +197,7 @@ namespace Microsoft.Data.Entity.Metadata
         {
             Check.NotEmpty(properties, "properties");
 
-            var key = TryGetKey(properties);
+            var key = TryGetPrimaryKey(properties);
             if (key != null)
             {
                 throw new InvalidOperationException(Strings.DuplicateKey(Property.Format(properties), Name));
@@ -210,7 +210,14 @@ namespace Microsoft.Data.Entity.Metadata
                     Strings.KeyPropertiesWrongEntity(Property.Format(properties), Name));
             }
 
-            _keys.Value.Add(key);
+            var currentIndex = _keys.Value.BinarySearch(key, KeyComparer.Instance);
+            if (currentIndex >= 0)
+            {
+                throw new InvalidOperationException(Strings.DuplicateKey(Property.Format(properties), Name));
+            }
+
+            var newIndex = ~currentIndex;
+            _keys.Value.Insert(newIndex, key);
 
             return key;
         }
@@ -334,19 +341,20 @@ namespace Microsoft.Data.Entity.Metadata
             Check.NotEmpty(properties, "properties");
             Check.NotNull(referencedKey, "referencedKey");
 
-            var foreignKey = TryGetForeignKey(properties);
-            if (foreignKey != null)
-            {
-                throw new InvalidOperationException(Strings.DuplicateForeignKey(Property.Format(foreignKey.Properties), Name));
-            }
-
-            foreignKey = new ForeignKey(properties, referencedKey);
+            var foreignKey = new ForeignKey(properties, referencedKey);
             if (foreignKey.EntityType != this)
             {
                 throw new ArgumentException(Strings.ForeignKeyPropertiesWrongEntity(Property.Format(properties), Name));
             }
 
-            _foreignKeys.Value.Add(foreignKey);
+            var currentIndex = _foreignKeys.Value.BinarySearch(foreignKey, KeyComparer.Instance);
+            if (currentIndex >= 0)
+            {
+                throw new InvalidOperationException(Strings.DuplicateForeignKey(Property.Format(foreignKey.Properties), Name));
+            }
+
+            var newIndex = ~currentIndex;
+            _foreignKeys.Value.Insert(newIndex, foreignKey);
 
             UpdateOriginalValueIndexes();
 
@@ -938,6 +946,47 @@ namespace Microsoft.Data.Entity.Metadata
             public int Compare(Property x, Property y)
             {
                 return StringComparer.Ordinal.Compare(x.Name, y.Name);
+            }
+        }
+
+        private class PropertyListComparer : IComparer<IReadOnlyList<Property>>
+        {
+            public static readonly PropertyListComparer Instance = new PropertyListComparer();
+
+            private PropertyListComparer()
+            {
+            }
+
+            public int Compare(IReadOnlyList<Property> x, IReadOnlyList<Property> y)
+            {
+                var result = x.Count - y.Count;
+
+                if (result != 0)
+                {
+                    return result;
+                }
+
+                var index = 0;
+                while (result == 0 && index < x.Count)
+                {
+                    result = PropertyComparer.Instance.Compare(x[index], y[index]);
+                    index++;
+                }
+                return result;
+            }
+        }
+
+        private class KeyComparer : IComparer<Key>
+        {
+            public static readonly KeyComparer Instance = new KeyComparer();
+
+            private KeyComparer()
+            {
+            }
+
+            public int Compare(Key x, Key y)
+            {
+                return PropertyListComparer.Instance.Compare(x.Properties, y.Properties);
             }
         }
     }

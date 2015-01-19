@@ -25,7 +25,7 @@ namespace Microsoft.Data.Entity.Tests.Metadata.ModelConventions
                     entityBuilder = new InternalEntityBuilder(b.Metadata, b.ModelBuilder);
                     return entityBuilder;
                 });
-            conventionDispatcher.EntityTypeConventions.Add(convention.Object);
+            conventionDispatcher.OnEntityTypeAddedConventions.Add(convention.Object);
 
             var nullConvention = new Mock<IEntityTypeConvention>();
             nullConvention.Setup(c => c.Apply(It.IsAny<InternalEntityBuilder>())).Returns<InternalEntityBuilder>(b =>
@@ -33,7 +33,7 @@ namespace Microsoft.Data.Entity.Tests.Metadata.ModelConventions
                     Assert.Same(entityBuilder, b);
                     return null;
                 });
-            conventionDispatcher.EntityTypeConventions.Add(nullConvention.Object);
+            conventionDispatcher.OnEntityTypeAddedConventions.Add(nullConvention.Object);
 
             Assert.Null(builder.Entity(typeof(Order), ConfigurationSource.Convention));
 

@@ -353,7 +353,7 @@ namespace Microsoft.Data.Entity.Tests.Metadata.ModelConventions
 
         private static void ConfigureKeys(InternalEntityBuilder entityBuilder)
         {
-            entityBuilder.Key(new[] { "Id" }, ConfigurationSource.Convention);
+            entityBuilder.PrimaryKey(new[] { "Id" }, ConfigurationSource.Convention);
         }
 
         private class TestModelChangeListener : ConventionsDispatcher

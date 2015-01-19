@@ -1,6 +1,7 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
+// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -35,6 +36,29 @@ namespace Microsoft.Data.Entity.Metadata
         {
             return entityType.Type == null
                    || typeof(INotifyPropertyChanged).GetTypeInfo().IsAssignableFrom(entityType.Type.GetTypeInfo());
+        }
+
+        public static ForeignKey TryGetForeignKey(
+            [NotNull] this EntityType dependentType,
+            [NotNull] EntityType principalType,
+            [CanBeNull] string navigationToPrincipal,
+            [CanBeNull] string navigationToDependent,
+            [CanBeNull] IReadOnlyList<Property> foreignKeyProperties,
+            [CanBeNull] IReadOnlyList<Property> referencedProperties,
+            bool? isUnique)
+        {
+            Check.NotNull(dependentType, "dependentType");
+            Check.NotNull(principalType, "principalType");
+
+            return dependentType.ForeignKeys.FirstOrDefault(fk =>
+                fk.IsCompatible(
+                    principalType,
+                    dependentType,
+                    navigationToPrincipal,
+                    navigationToDependent,
+                    foreignKeyProperties,
+                    referencedProperties,
+                    isUnique));
         }
     }
 }

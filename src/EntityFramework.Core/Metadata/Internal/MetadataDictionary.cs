@@ -116,7 +116,7 @@ namespace Microsoft.Data.Entity.Metadata.Internal
             _values.Add(key, new Tuple<TValue, ConfigurationSource>(value, configurationSource));
         }
 
-        public virtual bool Remove([NotNull] TKey key, ConfigurationSource configurationSource, bool canOverrideSameSource = true)
+        public virtual ConfigurationSource? Remove([NotNull] TKey key, ConfigurationSource configurationSource, bool canOverrideSameSource = true)
         {
             Check.NotNull(key, "key");
 
@@ -127,16 +127,18 @@ namespace Microsoft.Data.Entity.Metadata.Internal
                     && (tuple.Item2 != configurationSource || canOverrideSameSource))
                 {
                     _values.Remove(key);
-                    return true;
+                    return tuple.Item2;
                 }
                 else
                 {
-                    return false;
+                    return null;
                 }
             }
 
-            return configurationSource == ConfigurationSource.Explicit
-                   && canOverrideSameSource;
+            return configurationSource.Overrides(_defaultConfigurationSource)
+                   && (_defaultConfigurationSource != configurationSource || canOverrideSameSource)
+                ? _defaultConfigurationSource
+                : (ConfigurationSource?)null;
         }
     }
 }

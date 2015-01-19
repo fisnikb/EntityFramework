@@ -144,7 +144,7 @@ namespace Microsoft.Data.Entity.Metadata.Internal
             var modelBuilder = new InternalModelBuilder(new Model(), null);
             modelBuilder
                 .Entity(typeof(Customer), ConfigurationSource.Convention)
-                .Key(new[] { Customer.IdProperty }, ConfigurationSource.Convention);
+                .PrimaryKey(new[] { Customer.IdProperty }, ConfigurationSource.Convention);
             var orderEntityTypeBuilder = modelBuilder.Entity(typeof(Order), ConfigurationSource.Explicit);
 
             Assert.NotNull(orderEntityTypeBuilder.ForeignKey(typeof(Customer), new[] { Order.CustomerIdProperty }, ConfigurationSource.Convention));
@@ -161,7 +161,7 @@ namespace Microsoft.Data.Entity.Metadata.Internal
             var modelBuilder = new InternalModelBuilder(new Model(), null);
             modelBuilder
                 .Entity(typeof(Customer), ConfigurationSource.Convention)
-                .Key(new[] { Customer.IdProperty }, ConfigurationSource.Convention);
+                .PrimaryKey(new[] { Customer.IdProperty }, ConfigurationSource.Convention);
             var orderEntityTypeBuilder = modelBuilder.Entity(typeof(Order), ConfigurationSource.Convention);
 
             Assert.NotNull(orderEntityTypeBuilder.ForeignKey(typeof(Customer), new[] { Order.CustomerIdProperty }, ConfigurationSource.Explicit));
@@ -178,10 +178,10 @@ namespace Microsoft.Data.Entity.Metadata.Internal
             var modelBuilder = new InternalModelBuilder(new Model(), null);
             modelBuilder
                 .Entity(typeof(Customer), ConfigurationSource.Convention)
-                .Key(new[] { Customer.IdProperty }, ConfigurationSource.Convention);
+                .PrimaryKey(new[] { Customer.IdProperty }, ConfigurationSource.Convention);
             modelBuilder
                 .Entity(typeof(Product), ConfigurationSource.Convention)
-                .Key(new[] { Product.IdProperty }, ConfigurationSource.Convention);
+                .PrimaryKey(new[] { Product.IdProperty }, ConfigurationSource.Convention);
 
             var orderEntityTypeBuilder = modelBuilder.Entity(typeof(Order), ConfigurationSource.Convention);
             orderEntityTypeBuilder.ForeignKey(typeof(Customer), new[] { Order.CustomerIdProperty }, ConfigurationSource.Convention);
@@ -198,10 +198,10 @@ namespace Microsoft.Data.Entity.Metadata.Internal
             var modelBuilder = new InternalModelBuilder(new Model(), null);
             modelBuilder
                 .Entity(typeof(Customer), ConfigurationSource.Convention)
-                .Key(new[] { Customer.IdProperty }, ConfigurationSource.Convention);
+                .PrimaryKey(new[] { Customer.IdProperty }, ConfigurationSource.Convention);
             modelBuilder
                 .Entity(typeof(Product), ConfigurationSource.Convention)
-                .Key(new[] { Product.IdProperty }, ConfigurationSource.Convention);
+                .PrimaryKey(new[] { Product.IdProperty }, ConfigurationSource.Convention);
 
             var orderEntityTypeBuilder = modelBuilder.Entity(typeof(Order), ConfigurationSource.Explicit);
             orderEntityTypeBuilder.ForeignKey(typeof(Customer), new[] { Order.CustomerIdProperty }, ConfigurationSource.Convention);
@@ -219,10 +219,10 @@ namespace Microsoft.Data.Entity.Metadata.Internal
             var modelBuilder = new InternalModelBuilder(new Model(), null);
             modelBuilder
                 .Entity(typeof(Customer), ConfigurationSource.Convention)
-                .Key(new[] { Customer.IdProperty }, ConfigurationSource.Convention);
+                .PrimaryKey(new[] { Customer.IdProperty }, ConfigurationSource.Convention);
             modelBuilder
                 .Entity(typeof(Product), ConfigurationSource.Explicit)
-                .Key(new[] { Product.IdProperty }, ConfigurationSource.Convention);
+                .PrimaryKey(new[] { Product.IdProperty }, ConfigurationSource.Convention);
 
             var orderEntityTypeBuilder = modelBuilder.Entity(typeof(Order), ConfigurationSource.Convention);
             orderEntityTypeBuilder.ForeignKey(typeof(Customer), new[] { Order.CustomerIdProperty }, ConfigurationSource.Convention);
